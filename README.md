@@ -1,3 +1,4 @@
+<img src="https://www.raspberrypi.org/wp-content/uploads/2011/10/Raspi-PGB001.png" width="80">
 # The Chocolate Box News Reader
 
 **Project Name**: paxnews
@@ -8,7 +9,7 @@ The Chocolate Box News Reader (CBNR) continuously displays news from the CBC RSS
 ##Features:
   * About 20 news feeds
   * Each about 20 news items
-  * Ench news items has "more" information the can be displayed on request.
+  * Each news items has "more" information the can be displayed on request.
   
 ##Components
 The CBNR is built from:

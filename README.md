@@ -14,10 +14,10 @@
 The Chocolate Box News Reader (CBNR) continuously displays news from the [CBC](https://en.wikipedia.org/wiki/Canadian_Broadcasting_Corporation) [RSS](https://en.wikipedia.org/wiki/RSS) feeds.
 
 ##Features:
-  * 29 news feeds - Tops Stories, World, and Canada Regional
+  * 29 news feeds - Top Stories, World, and Canada Regional
   * 15 news items per feed
   * It takes about 90 minutes to cycle through the full news set
-  * Each news items has "more" information that can be displayed on request.
+  * Each news item has "more" information that can be displayed on request.
   * Will run offline with stored news
   * Can run on continuous power (current uptime is 8 weeks 4 days)
   * Even with only the dumb keypad & 2x16 display, it can connect to a local wifi access point, with password, or web login
@@ -51,10 +51,12 @@ And from there the project grew... and grew...
   
 Other questions to me (and answers):
   * How do I parse RSS data [completed]
-  * How do I to run on continuous power so don't lose Uptime  [completed]
+  * How can I to run on continuous power so I don't lose Uptime  [completed]
   * How do I to use shrinkwrap insulation [completed]
-  * How do I use git, and publish to GitHub [completed]
-  * How do I publish to hackerday.io, hackster, google+ Raspberry Pi community [pending]
+  * How can I connect to a local wifi access point to enter a wifi password, or via a web login, with only a dumb keypad & a 2x16 display, and without using a keyboard, mouse, screen. (This took several months to figure out!) [completed]  
+  Hint: I cheat!
+  * How can I use git, and publish to GitHub [completed]
+  * How do I publish to Hackaday.io, Hackster.io, Google+ Raspberry Pi Community [pending]
 
 (email me if I can help with answers for you)
 
@@ -63,6 +65,6 @@ Other questions to me (and answers):
 
 ##Operating Instructions
 See the project wiki [pending]
-
+***
 Last update: February 2, 2017  
 Toronto Canada

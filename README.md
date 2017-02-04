@@ -60,11 +60,9 @@ Other questions to me (and answers):
 
 (email me if I can help with answers for you)
 
-
-##Operation
-
+  
 ##Operating Instructions
-See the project wiki [pending]
+[See the project wiki](wiki/Home)
 ***
-Last update: February 2, 2017  
+Last update: February 4, 2017  
 Toronto Canada

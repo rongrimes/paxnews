@@ -62,7 +62,7 @@ Other questions to me (and answers):
 
   
 ##Operating Instructions
-[See the project wiki](wiki/Home)
+[See the project wiki](../../wiki/Home)
 ***
 Last update: February 4, 2017  
 Toronto Canada

@@ -51,6 +51,8 @@ Other questions to me (and answers):
 
 (email me if I can help with answers for you)
 
+***
+
 ##Construction
 The CBNR is built from:
   * [Raspberry Pi 2](https://www.raspberrypi.org/products/raspberry-pi-2-model-b/)
@@ -62,6 +64,7 @@ The CBNR is built from:
 ### Wiring Diagram
 <img src="./images/ChocBoxReader_bb.png" alt="Fritzing diagram" width="600"/>
 
+***
 
 ## Operating Instructions
 [See the project wiki](../../wiki/Home)

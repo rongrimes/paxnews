@@ -48,9 +48,9 @@ Other questions to me (and answers):
   Hint: I cheat!
   * How can I use git, and publish to GitHub [completed]
   * How do I publish to:
+    * Google+ Raspberry Pi Community [completed]
     * Hackaday.io [pending]
     * Hackster.io [pending]
-    * Google+ Raspberry Pi Community [pending]
 
 (email me if I can help with answers for you)
 

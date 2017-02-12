@@ -5,8 +5,8 @@
 
 <table>
 <tr>
-    <td> <img src="./images/ChocolateBoxReader-7810.jpg" alt="Drawing" style="width: 250px;"/> </td>
-    <td> <img src="./images/ChocolateBoxReader-7834.jpg" alt="Drawing" style="width: 250px;"/> </td>
+    <td valign="top"> <img src="./images/ChocolateBoxReader-7810.jpg" alt="Outside" width= "450px"/> </td>
+    <td> <img src="./images/ChocolateBoxReader-7834.jpg" alt="Inside" width= "350px"/> </td>
     </tr>
 </table>
 
@@ -22,15 +22,6 @@ The Chocolate Box News Reader (CBNR) continuously displays news from the [CBC](h
   * Can run on continuous power (current uptime is 8 weeks 4 days)
   * Even with only the dumb keypad & 2x16 display, it can connect to a local wifi access point, with password, or web login
   
-##Components
-The CBNR is built from:
-  * [Raspberry Pi 2](https://www.raspberrypi.org/products/raspberry-pi-2-model-b/)
-  * [wifi dongle](https://www.canakit.com/raspberry-pi-wifi.html)
-  * [Parallax 2x16 Serial LCD display](https://www.parallax.com/product/27977)
-  * [4x3 button keypad](https://www.creatroninc.com/product/4x3-button-keypad/)
-  * ... and a small chocolate box.
-
-
 ##Reason for Building
 "_Worst case of scope creep I've ever seen._"  
 -Ron Grimes  
@@ -60,8 +51,19 @@ Other questions to me (and answers):
 
 (email me if I can help with answers for you)
 
-  
-##Operating Instructions
+##Construction
+The CBNR is built from:
+  * [Raspberry Pi 2](https://www.raspberrypi.org/products/raspberry-pi-2-model-b/)
+  * [wifi dongle](https://www.canakit.com/raspberry-pi-wifi.html)
+  * [Parallax 2x16 Serial LCD display](https://www.parallax.com/product/27977)
+  * [4x3 button keypad](https://www.creatroninc.com/product/4x3-button-keypad/)
+  * ... and a small chocolate box.
+
+### Wiring Diagram
+<img src="./images/ChocBoxReader_bb.png" alt="Fritzing diagram" width="600"/>
+
+
+## Operating Instructions
 [See the project wiki](../../wiki/Home)
 ***
 Last update: February 4, 2017  

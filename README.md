@@ -47,7 +47,10 @@ Other questions to me (and answers):
   * How can I connect to a local wifi access point to enter a wifi password, or via a web login, with only a dumb keypad & a 2x16 display, and without using a keyboard, mouse, screen. (This took several months to figure out!) [completed]  
   Hint: I cheat!
   * How can I use git, and publish to GitHub [completed]
-  * How do I publish to Hackaday.io, Hackster.io, Google+ Raspberry Pi Community [pending]
+  * How do I publish to:
+    * Hackaday.io [pending]
+    * Hackster.io [pending]
+    * Google+ Raspberry Pi Community [pending]
 
 (email me if I can help with answers for you)
 

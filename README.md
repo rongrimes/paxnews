@@ -72,5 +72,5 @@ The CBNR is built from:
 ## Operating Instructions
 [See the project wiki](../../wiki/Home)
 ***
-Last update: February 4, 2017  
+Last update: February 12, 2017  
 Toronto Canada

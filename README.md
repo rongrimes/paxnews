@@ -1,4 +1,5 @@
 <img src="https://www.raspberrypi.org/wp-content/uploads/2011/10/Raspi-PGB001.png" width="80">
+
 # The Chocolate Box News Reader
 
 **Project Name**: paxnews
@@ -10,10 +11,12 @@
     </tr>
 </table>
 
-##What does it do
+## What does it do
+
 The Chocolate Box News Reader (CBNR) continuously displays news from the [CBC](https://en.wikipedia.org/wiki/Canadian_Broadcasting_Corporation) [RSS](https://en.wikipedia.org/wiki/RSS) feeds.
 
-##Features:
+## Features:
+
   * 29 news feeds - Top Stories, World, and Canada Regional
   * 15 news items per feed
   * It takes about 90 minutes to cycle through the full news set
@@ -22,7 +25,8 @@ The Chocolate Box News Reader (CBNR) continuously displays news from the [CBC](h
   * Can run on continuous power (current uptime is 8 weeks 4 days)
   * Even with only the dumb keypad & 2x16 display, it can connect to a local wifi access point, with password, or web login
   
-##Reason for Building
+## Reason for Building
+
 "_Worst case of scope creep I've ever seen._"  
 -Ron Grimes  
  February 1, 2017
@@ -56,7 +60,8 @@ Other questions to me (and answers):
 
 ***
 
-##Construction
+## Construction
+
 The CBNR is built from:
   * [Raspberry Pi 2](https://www.raspberrypi.org/products/raspberry-pi-2-model-b/)
   * [wifi dongle](https://www.canakit.com/raspberry-pi-wifi.html)

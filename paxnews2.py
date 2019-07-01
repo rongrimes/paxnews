@@ -229,6 +229,8 @@ def help_msg():
 
 #-----------------------------------------------------------------
 def disp_topic(rss_site, news_time, news_is_live):
+    init_screen(0.5)                     # repeated here to restore backlight each cycle.
+
     '''Display the topic & time. Called at start of topic or if requested.'''
     linesegments = []
 

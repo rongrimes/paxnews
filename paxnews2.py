@@ -9,7 +9,13 @@ import pickle
 #import wifi
 
 # Special imports for Internet libraries
-import feedparser
+try:
+    import feedparser
+except ModuleNotFoundError:
+    print("Module not found: feedparser")
+    print("Run: sudo pip3 install feedparser")
+    sys.exit()
+
 from bs4 import BeautifulSoup
 
 # Own libraries from immediate directory

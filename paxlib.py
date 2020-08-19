@@ -37,14 +37,31 @@ def init_pax():
 
 #   print('init_pax')
     # Open Serial port
-    pax_2x16 = serial.Serial(
-               port='/dev/ttyAMA0',
-               baudrate = 19200,
-               parity=serial.PARITY_NONE,
-               stopbits=serial.STOPBITS_ONE,
-               bytesize=serial.EIGHTBITS,
-               timeout=1
-               )
+    try:
+        pax_2x16 = serial.Serial(
+                   port='/dev/ttyAMA0',
+                   baudrate = 19200,
+                   parity=serial.PARITY_NONE,
+                   stopbits=serial.STOPBITS_ONE,
+                   bytesize=serial.EIGHTBITS,
+                   timeout=1
+                   )
+    except serial.serialutil.SerialException:
+        print("SerialException error: serial port to Parallax display not available.")
+        print()
+        print("To fix: edit /boot/cmdline.txt")
+        print("\tRemove 'console=serial0,xxxxx', and reboot.")
+        print()
+        print("Alternative:")
+        print("\t1. run 'sudo raspi-config'")
+        print("\t2. >5. Interfacing Options")
+        print("\t3. >P6. Serial")
+        print("\t4. ...login shell... over serial? Answer: No")
+        print("\t5. ...serial port... enabled?     Answer: Yes")
+        print("\t6. Reboot for change to take effect.")
+        print()
+        sys.exit()
+
     init_screen(0.5)    # Backlight, cursor off, clear.
 
     keypad = Keypad()

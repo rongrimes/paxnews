@@ -1,12 +1,23 @@
 #!/usr/bin/python3
 
+# Import instructions to another Pi platform
+# ------------------------------------------
+# 1. Stop bash accessing serial device:
+#   /boot/cmdline.txt: remove console=115200 ???? (the first console string)
+# 2. sudo chmod 660 /dev/ttyS0   (should not be necessary, but it is...)
+# 3. Test;
+#       stty -F /dev/ttyS0 ospeed 19200
+#       echo abc > /dev/ttyS0    (should output "abc")
+# 4. sudo pip3 install feedparser
+# 5. Set pickle file location as required.
+
+
 import datetime
 import serial
 import string
 import sys
 import time
 import pickle
-#import wifi
 
 # Special imports for Internet libraries
 try:
@@ -17,6 +28,7 @@ except ModuleNotFoundError:
     sys.exit()
 
 from bs4 import BeautifulSoup
+from unicodedata import normalize   # to convert accented chars to non-accented
 
 # Own libraries from immediate directory
 from paxconfig import *
@@ -28,6 +40,7 @@ from paxlib import *
 pickle_file = "/home/pi/python/paxnews/rss_news.pickle"  # need full path since this runs from a service
 
 rss_list = {
+#   'Le Pointe-Actualite': 'https://www.lepoint.fr/rss.xml',
     'Top Stories': 'http://rss.cbc.ca/lineup/topstories.xml',
     'World': 'http://rss.cbc.ca/lineup/world.xml',
     'Canada': 'http://rss.cbc.ca/lineup/canada.xml',
@@ -77,6 +90,7 @@ def init_rssfeed():
     ''' Build list of News feeds '''
     global rssfeedlist
 
+#   rssfeedlist.append('Le Pointe-Actualite')   # Test for French chars.
     rssfeedlist.append('Top Stories')
     rssfeedlist.append('World')
     rssfeedlist.append('Canada')
@@ -139,8 +153,6 @@ def next_rssfeed(start_site):
             delete_entry = True     # delete entry after getting next site
 
     rss_feed = feedparser.parse( python_wiki_rss_url )
-
-#   rss_feed = {"entries":{"title":["frog","frog 2"]}}    # not sure this is right
     return new_site, rss_feed
 
 #-----------------------------------------------------------------
@@ -188,9 +200,10 @@ def show_details(details):
 
 #-----------------------------------------------------------------
 def prep(news_line):
+    # news_line = 'unicode string'
     #clear non-visible chars from string
-    # Take care... may not work for unicode!!
-    news_line = ''.join([c for c in news_line if ord(c) < 128 and ord(c) > 31])
+#   news_line = ''.join([c for c in news_line if ord(c) < 128 and ord(c) > 31])
+    news_line = normalize("NFD", news_line).encode('ascii','ignore').decode("utf-8")
 
     linesegments = []
     start = 0

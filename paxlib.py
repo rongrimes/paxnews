@@ -39,7 +39,8 @@ def init_pax():
     # Open Serial port
     try:
         pax_2x16 = serial.Serial(
-                   port='/dev/ttyAMA0',
+#                  port='/dev/ttyAMA0',
+                   port='/dev/ttyS0',
                    baudrate = 19200,
                    parity=serial.PARITY_NONE,
                    stopbits=serial.STOPBITS_ONE,

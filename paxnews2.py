@@ -13,11 +13,13 @@
 
 
 import datetime
+import pickle
 import serial
+import signal
 import string
 import sys
 import time
-import pickle
+import traceback     # prints info in case of unknown exception
 
 # Special imports for Internet libraries
 try:
@@ -145,15 +147,22 @@ def next_rssfeed(start_site):
 #           python_wiki_rss_url = "X" +rss_list[new_site]
 #           print(python_wiki_rss_url)
 
-            break                 # we succeeded in getting a valid new site
         except KeyError:
             print('"' + new_site + '" is not a valid News topic. Removed.')
             start_site = new_site  # return in the loop & get the next entry
             invalid_site = new_site
             delete_entry = True     # delete entry after getting next site
+            continue
 
-    rss_feed = feedparser.parse( python_wiki_rss_url )
-    return new_site, rss_feed
+        try:
+            rss_feed = feedparser.parse( python_wiki_rss_url )
+            return new_site, rss_feed # we succeeded in getting a valid new site
+        except:
+            # Rare case of changing network connections causes failure here.
+            # Printerror and repeat
+            traceback.print_exc()    # log error for review. 
+            time.sleep(1)            # give network a bit of time to recover
+
 
 #-----------------------------------------------------------------
 def save_rss(rss_site, news_time, news):
@@ -277,7 +286,17 @@ def cap(s, leng):
     '''Returns s up to a max length of leng'''
     return s if len(s)<=leng else s[0:leng]
 
+# Arm signal to end program.
+def handler(signum, frame):
+    ''' A sigint interrupt will get caught here, and will in effect be the same as
+        getting a ^C at the keyboard.'''
+        # Doesn't appear to be working...
+    raise KeyboardInterrupt
+
 #-----------------------------------------------------------------
+# Arm sigint to cause proceed to graceful end.
+signal.signal(signal.SIGINT, handler)
+
 # Initialize pax display & keypad
 #print("Call init_pax")
 init_pax()
@@ -347,9 +366,6 @@ try:
 except KeyboardInterrupt:
     print("\rKeyboardInterrupt")
     GPIO.cleanup()   # Clear any current status
-
-finally:
-    pass
 
 # Clear Screen
 clear_screen(0)

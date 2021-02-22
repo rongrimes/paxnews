@@ -142,11 +142,6 @@ def next_rssfeed(start_site):
 
         try:
             python_wiki_rss_url = rss_list[new_site]
-
-#           Debug pickler/offline code: uncomment next 2 lines
-#           python_wiki_rss_url = "X" +rss_list[new_site]
-#           print(python_wiki_rss_url)
-
         except KeyError:
             print('"' + new_site + '" is not a valid News topic. Removed.')
             start_site = new_site  # return in the loop & get the next entry
@@ -156,12 +151,13 @@ def next_rssfeed(start_site):
 
         try:
             rss_feed = feedparser.parse( python_wiki_rss_url )
-            return new_site, rss_feed # we succeeded in getting a valid new site
         except:
             # Rare case of changing network connections causes failure here.
-            # Printerror and repeat
+            # Log error and force read from storage
             traceback.print_exc()    # log error for review. 
-            time.sleep(1)            # give network a bit of time to recover
+            rss_feed = {"entries":[]} # build dummy entry to force read from storage 
+
+        return new_site, rss_feed # we succeeded in getting a valid new site
 
 
 #-----------------------------------------------------------------

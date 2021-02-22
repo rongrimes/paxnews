@@ -69,14 +69,15 @@ class Wifi:
             name = input("New network name: ") if nname == "" else nname
             password = input("Network password: ")
         except KeyboardInterrupt:
-            return
+            print()
+            return False
         id = int(self.wpa_cli("add_network"))
         result = self.wpa_cli("set_network", id, parm='ssid "'+name+'"')
         result = self.wpa_cli("set_network", id, parm='psk "'+password+'"')
         result = self.wpa_cli("set_network", id, parm='key_mgmt WPA-PSK')
         result = self.wpa_cli("enable_network", id)
         result = self.wpa_cli("save_config")
-        return result
+        return True
 
     def remove_network(self, ssid=""):
         if ssid == "":
@@ -85,6 +86,7 @@ class Wifi:
                 id = input("Network # to remove: ")
                 id = int(id)
             except KeyboardInterrupt:
+                print()
                 return
             except ValueError:
                 print("(ignored)")
@@ -95,18 +97,22 @@ class Wifi:
         discard = self.wpa_cli("save_config")
         return result
 
-    def select_network(self):
-        try:
-            print("Enter value, ^C to exit.")
-            id = input("Enter network to use: ")
-            id = int(id)
-        except KeyboardInterrupt:
-            return
-        except ValueError:
-            print("(ignored)")
-            return
+    def select_network(self, ssid=""):
+        if ssid == "":
+            try:
+                print("Enter value, ^C to exit.")
+                id = input("Enter network to use: ")
+                id = int(id)
+            except KeyboardInterrupt:
+                print()
+                return
+            except ValueError:
+                print("(ignored)")
+                return
+        else:
+            id = self.networks[ssid]
         result = self.wpa_cli("select_network", id)
-        time.sleep(5)
+        time.sleep(8)
         return result
 
     def reconfigure(self):
@@ -155,7 +161,7 @@ class Wifi:
                                 status["ssid"] == ssid else " "
             locked = wifi.is_locked(ssids[ssid][1])
             strength = str(wifi.sig_strength(ssids[ssid][0]))
-            defined = "D" if ssid in wifi.networks else " "
+            defined = "F" if ssid in wifi.networks else " "
             ssid_info ={"current_ap":current_ap, "locked":locked, "strength":strength,
                         "defined":defined, "ssid":ssid}
             ssid_info["line"] = self.build_line(ssid_info)
@@ -167,41 +173,85 @@ class Wifi:
             return readchar.readchar()
         else:
             # get input from keypad > TBD
-            pass
-        return key
+            return ""
 
     def choose(self):
         s_line = 0 
         
+        print("(n)ext, (b)efore, (s)elect, (r)emove, (m)anage netwk, (q)uit:")
         while True:
             print(wifi.scroll[s_line]["line"] + " ", end="", flush=True)
             key  = wifi.getkey()
 
-            if   key in ("u", "1"):  # Up 
+# Before
+            if   key in ("b", "1"):  # Before
                 print()
                 s_line += 1
                 if s_line >= len(wifi.scroll):
                     s_line = 0
-            elif key in ("d", "4", "\r", " "):  # Down
+# Next
+            elif key in ("n", "4", "\r", " "):    # Next
                 print()
                 s_line = s_line - 1 if s_line > 0 else len(wifi.scroll) - 1
-            elif key in ("f", "2"):  # deFine
-                print("f")
-                wifi.add_network(wifi.scroll[s_line]["ssid"])
-                wifi.scroll[s_line]["defined"] = "D"
-                wifi.scroll[s_line]["line"] = self.build_line(wifi.scroll[s_line])
+# Select network
             elif key in ("s", "3"):  # Select
-                print("s")
+                ssid = wifi.scroll[s_line]["ssid"]
+                if wifi.scroll[s_line]["defined"] != "F":
+                    print()
+                    if wifi.add_network(ssid):
+                        wifi.list_networks()  # update networks dict
+                        wifi.scroll[s_line]["defined"] = "F"
+                        wifi.scroll[s_line]["line"] = self.build_line(wifi.scroll[s_line])
+                    else:
+                        continue
+                print("... a few seconds")
+                wifi.select_network(ssid)
+                wifi.build_scroll()
+                status = wifi.status()
+                if status["wpa_state"] == "COMPLETED":
+                    print("Select succeeded")
+                else:
+                    print("Select failed")
+                s_line = min(s_line, len(wifi.scroll)-1)    # in case we see
+                                                            # fewer wifi units out there
+                                                            # after the build_scroll.
+# Remove network from wpa_supplicant.conf
             elif key in ("r", "6"):  # Remove
-                print("r")
-                wifi.remove_network(wifi.scroll[s_line]["ssid"])
-                wifi.scroll[s_line]["defined"] = " "
-                wifi.scroll[s_line]["line"] = self.build_line(wifi.scroll[s_line])
-            elif key in ("p", "5"):  # Password
-                print("p")
+                print()
+                if wifi.scroll[s_line]["current_ap"] == "*":
+                    print("Can't remove active network")
+                    continue
+                ssid = wifi.scroll[s_line]["ssid"]
+                if ssid in wifi.networks:
+                    wifi.remove_network(wifi.scroll[s_line]["ssid"])
+                    wifi.scroll[s_line]["defined"] = " "
+                    wifi.scroll[s_line]["line"] = self.build_line(wifi.scroll[s_line])
+                    wifi.list_networks()
+                else:
+                    print("ssid not in definitions")
+# Manage networks
+            elif key in ("m", "5"):  # Manage
+                print()
+                ssid = wifi.scroll[s_line]["ssid"]
+                if wifi.scroll[s_line]["defined"] == "F":
+                    try:
+                        password = input("Network password: ")
+                    except KeyboardInterrupt:
+                        print()
+                        continue
+                    id = self.networks[ssid]
+                    result = self.wpa_cli("set_network", id, parm='psk "'+password+'"')
+                    result = self.wpa_cli("save_config")
+                else:
+                    if wifi.add_network(ssid):    # adds password here.
+                        wifi.list_networks()  # update networks dict
+                        wifi.scroll[s_line]["defined"] = "F"
+                        wifi.scroll[s_line]["line"] = self.build_line(wifi.scroll[s_line])
+# Quit
             elif key in ("q", "x", "*"):  # Quit, eXit
                 print()
                 return
+# Unrecognized/Repeat
             else:
                 print()
 
@@ -224,7 +274,7 @@ if (__name__ == "__main__"):
 #           keypad.wait_keypress()
 #           print(keypad.key,  keypad.cseconds, keypad.keytype)
             cli = input('scan, list_n, add, remove, select, status, ' +
-                        'reconfigure, all, choose*, quit: ').strip()
+                        'reconfigure, all, choose, quit: ').strip()
             if len(cli) == 0:
                 continue
             elif cli == "scan"[0:len(cli)]:

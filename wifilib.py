@@ -34,7 +34,9 @@ class Wifi:
         pass
 
     def wpa_cli(self, cmd, n_id=-1, parm=""):
-        wpa_cli_in = 'wpa_cli -i' + LAN_IFACE + " " + cmd
+        # Need full path name: wpa_cli is not in PATH when executed
+        # from a @reboot in crontab
+        wpa_cli_in = '/usr/sbin/wpa_cli -i' + LAN_IFACE + " " + cmd
         if n_id >= 0:
             wpa_cli_in += " " + str(n_id) + " " + parm
         wpa_cli_in = wpa_cli_in.split()

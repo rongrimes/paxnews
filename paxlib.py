@@ -98,7 +98,7 @@ def display_lines(linesegments, delay, width=16):
         else:
             i += 1
 
-        if spin(delay):
+        if spin(delay)[0]:
             break
 
 #key_type = {"none":"none", "singlekey":"single key", "long":"Long", "double":"Double"}
@@ -156,15 +156,16 @@ def cap(s, leng):
 
 def spin(seconds):
     global keypad
+    global key
     '''Wait the given number of seconds or until a key is pressed.
        Return: True if keypressed; False otherwise.
     '''
     # Work in units of cseconds (1/100 seconds)
     for i in range(0, int(seconds*100)):
         if keypad.pressed():
-            return True
+            return True, keypad.key
         time.sleep(0.01)
-    return False
+    return False, ""
 
 def wait_key():
     global keypad
@@ -189,7 +190,8 @@ if (__name__ == "__main__"):
             if s  == "0":
                 print("0, 1, 2, q")
             elif s == "1":
-                get_IP(10)
+#               get_IP(10)
+                get_IP2()
             elif s == "2":
                 show_wireless()
             elif s == "q":

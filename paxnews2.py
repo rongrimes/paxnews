@@ -154,7 +154,8 @@ def next_rssfeed(start_site):
         except:
             # Rare case of changing network connections causes failure here.
             # Log error and force read from storage
-            traceback.print_exc()    # log error for review. 
+#           print("Weird error")
+#           traceback.print_exc()    # log error for review. 
             rss_feed = {"entries":[]} # build dummy entry to force read from storage 
 
         return new_site, rss_feed # we succeeded in getting a valid new site
@@ -298,7 +299,7 @@ signal.signal(signal.SIGINT, handler)
 init_pax()
 
 #Show IP address
-get_IP(maxcount=10)
+get_IP2()
  
 # Initialize News feed
 rssfeedlist = []    # global: built in init_rssfeed, (occasionally) updated in next_rssfeed

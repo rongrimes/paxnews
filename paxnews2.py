@@ -163,27 +163,36 @@ def next_rssfeed(start_site):
 
 #-----------------------------------------------------------------
 def save_rss(rss_site, news_time, news):
-#   rss_news{"rss_sitex":(date-time, news), "rss_sitey":(date-time, news), ...}
+    '''
+    Save: 
+    rss_save = (rss_site, rss_news)
+    rss_news = {"rss_sitex":(date-time, news),
+                "rss_sitey":(date-time, news), ...}
+    '''
 #   Get existing pickle file to update.
     try:
         f = open(pickle_file, "rb")
-        rss_news = pickle.load(f)
+        _, rss_news = pickle.load(f)  # (rss_site, rss_news)
+                                      # ignore existing rss_site value
         f.close()
     except IOError:
+#       print("save_rss error")
         rss_news = {}     # create empty dictionary to rebuild rss_news 
 
 #   Update the latest value for rss_site
     rss_news[rss_site] = (news_time, news)
+    rss_save = (rss_site, rss_news)
 
     f = open(pickle_file, "wb")
-    pickle.dump(rss_news, f)
+    pickle.dump(rss_save, f)
     f.close()
 
 
 def get_rss(rss_site):
     try:
         f = open(pickle_file, "rb")
-        rss_news = pickle.load(f)
+#       rss_news = pickle.load(f)
+        rss_site, rss_news = pickle.load(f)  # (rss_site, rss_news)
         f.close()
 
         news_time, news = rss_news[rss_site]
@@ -192,8 +201,10 @@ def get_rss(rss_site):
         # The original default action in the code was to get an empty list - which we duplicate here.
         news_time = datetime.datetime.now()
         news = []   # return an empty list. The topic will appear, but nothing else.
+        rss_site = ''
 
-    return news_time, news
+#   print("get_rss:",rss_site, news_time)
+    return rss_site, news_time, news
 
 #-----------------------------------------------------------------
 def show_details(details):
@@ -305,6 +316,7 @@ get_IP2()
 rssfeedlist = []    # global: built in init_rssfeed, (occasionally) updated in next_rssfeed
 init_rssfeed()
 rss_site = ""
+rss_site, _, _ = get_rss(rss_site)  # get rss_site - ignore other stuff
 
 # Principal loop
 
@@ -319,7 +331,8 @@ try:
         # Otherwise, save a copy for the pickle file.
         if len(rss_feed["entries"]) == 0:
             news_is_live = False
-            news_time, rss_feed["entries"] = get_rss(rss_site)
+            _, news_time, rss_feed["entries"] = get_rss(rss_site) # don't
+                                                    # overwrite rss_site
         else:
             news_is_live = True
             news_time = datetime.datetime.now()

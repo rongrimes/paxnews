@@ -264,7 +264,7 @@ class Wifi:
         return term_help, pax_help
 
     def _change_ap(self, ssid):
-        inactive = {"INACTIVE", "INTERFACE_DISABLED"}
+        inactive = {"INACTIVE", "INTERFACE_DISABLED", "DISCONNECTED"}
 
         self.select_network(ssid)
         while True:

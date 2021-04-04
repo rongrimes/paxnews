@@ -85,12 +85,15 @@ class Wifi:
 
     def get_network_password(self):
         self.kbd = read_kbd_direct.KDirect()
+        if self.kbd.keyboard is None:
+            e_password = "No kbd found."
+            linesegments = [e_password, "Pword: no chnge."]
+            self.display(myprint=e_password, linesegments=linesegments, delay=2)
+            return ""
 
         e_password = "Enter password: "
         linesegments = [e_password, ""]
-        self.display(myprint=e_password, \
-                linesegments=linesegments, \
-                delay=0)
+        self.display(myprint=e_password, linesegments=linesegments, delay=0)
 
         line = ""
         while True:

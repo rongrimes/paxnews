@@ -19,6 +19,8 @@ class KDirect():
     
     def __init__(self):
         self.keyboard = self._find_keyboard()
+        if self.keyboard is None:
+            return
         self._grab_keyboard()   # My keyboard, plus stops local echo.
 
         # Start flashing routine to flash Caps Lock led.
@@ -26,7 +28,7 @@ class KDirect():
         self.flash.start()
 
     def _find_keyboard(self):
-        while True:       # loop until we find a keyboard
+        for _ in range(0, 2):       # try a couple of times to find a keyboard
             devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
             for device in devices:
 #               print(device.path, device.name, device.phys)
@@ -34,7 +36,8 @@ class KDirect():
                         "control" not in device.name.lower():
                     print("Using", device.path, device.name)
                     return device
-            time.sleep(2) # take a couple seconds before we scan again
+            time.sleep(0.5) # pause before we scan again
+        return None
 
     def _grab_keyboard(self):
         try:
@@ -70,7 +73,7 @@ class KDirect():
         shift_set = {'KEY_LEFTSHIFT','KEY_RIGHTSHIFT',
                      'KEY_LEFTCTRL', 'KEY_RIGHTCTRL', 'KEY_CAPSLOCK'}
         char = {'GRAVE': ('`', '~'), 'MINUS': ('-', '_'), 'EQUAL': ('=', '+'),
-                'LEFTBRACE': ('[', '{'), 'RIGHTBRACE': ('[','}'), 'BACKSLASH': ('\\', '|'),
+                'LEFTBRACE': ('[', '{'), 'RIGHTBRACE': (']','}'), 'BACKSLASH': ('\\', '|'),
                 'SEMICOLON': (';', ':'), 'APOSTROPHE': ("'", '"'), 'COMMA': (',', '<'),
                 'DOT': ('.','>'), 'SLASH': ('/', '?'),
                 '1': ('1', '!'), '2': ("2", '@'), '3': ('3' '#'), '4': ('4', '$'),
@@ -98,6 +101,9 @@ class KDirect():
         if len(symbol) == 1 and symbol not in "0123456789":  # then a letter key:
             return symbol if self.shift else symbol.lower()  # symbol retrieved
                                                              #     as uppercase
+        if self.ctrl and key == "[":
+                return spec_char["KEY_ESC"]
+
         if symbol in char: 
             shift = 1 if self.shift else 0
             return char[symbol][shift]
@@ -130,7 +136,7 @@ class KDirect():
             self.flash_pause = False   # No shift keys on;
                                        # ...will force set_led to start flashing.
 
-        self.ctrl = False              # ctrl key not used (for now)
+        self.ctrl = False
         for a_key in self.shift_keys: # if any shift key is down
             if a_key[-4:] == 'CTRL' and self.shift_keys[a_key]:
                 self.ctrl = True     # find a ctrl key that is True

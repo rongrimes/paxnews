@@ -79,8 +79,8 @@ class KDirect():
                 '1': ('1', '!'), '2': ("2", '@'), '3': ('3' '#'), '4': ('4', '$'),
                 '5': ('5', '%'), '6': ("6", '^'), '7': ('7' '&'), '8': ('8', '*'),
                 '9': ('9', '('), '0': ('0' ')') }
-        spec_char = {'KEY_BACKSPACE': '\x7f', 'KEY_ESC': '\x1b',
-                     'KEY_SPACE': ' ', 'KEY_ENTER': '\n'}
+        spec_char = {'BACKSPACE': '\x7f', 'ESC': '\x1b',
+                     'SPACE': ' ', 'ENTER': '\n', 'ctl_c': '\x03'}
 
 #       print(evdev.categorize(event))
 #       print(event.type, event.code, event.value)
@@ -98,18 +98,21 @@ class KDirect():
         # We have a real key press
 #       print(key)
         symbol = key[4:]    # trim off "KEY_"
-        if len(symbol) == 1 and symbol not in "0123456789":  # then a letter key:
-            return symbol if self.shift else symbol.lower()  # symbol retrieved
-                                                             #     as uppercase
-        if self.ctrl and key == "[":
-                return spec_char["KEY_ESC"]
 
-        if symbol in char: 
+        if self.ctrl and symbol == "C":   # ^C
+            return spec_char["ctl_c"]
+        if self.ctrl and symbol == "LEFTBRACE":   # manual esc
+            return spec_char["ESC"]
+
+        if len(symbol) == 1 and symbol not in "0123456789":  # then a letter key
+            return symbol if self.shift else symbol.lower()  # symbol is retrieved
+                                                             #     as uppercase
+        if symbol in char:   # 
             shift = 1 if self.shift else 0
             return char[symbol][shift]
 
-        if key in spec_char:
-                return spec_char[key]
+        if symbol in spec_char:
+                return spec_char[symbol]
 
         return    # with None, and look for next input
 

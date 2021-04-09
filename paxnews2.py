@@ -42,7 +42,7 @@ from paxlib import *
 pickle_file = "/home/pi/python/paxnews/rss_news.pickle"  # need full path since this runs from a service
 
 rss_list = {
-#   'Le Pointe-Actualite': 'https://www.lepoint.fr/rss.xml',
+    'Le Pointe-Actualite': 'https://www.lepoint.fr/rss.xml',
     'Top Stories': 'http://rss.cbc.ca/lineup/topstories.xml',
     'World': 'http://rss.cbc.ca/lineup/world.xml',
     'Canada': 'http://rss.cbc.ca/lineup/canada.xml',
@@ -124,45 +124,29 @@ def init_rssfeed():
     rssfeedlist.append('Offbeat')
 
 #-----------------------------------------------------------------
-def next_rssfeed(start_site):
-    '''Get next News topic list being sensitive that topics can get dropped.'''
-    global rssfeedlist
+def next_rssfeed(site):
+    '''Get next News topic list.'''
+    if site not in rssfeedlist or site == rssfeedlist[-1]:
+        return rssfeedlist[0]
+    else:
+        return rssfeedlist[rssfeedlist.index(site) + 1]
 
-    delete_entry = False
+def get_rssfeed(site):
+    '''Get News content'''
+    try:
+        python_wiki_rss_url = rss_list[site]
+        rss_feed = feedparser.parse( python_wiki_rss_url )
+    except:
+        # Rare case of changing network connections causes failure here.
+        # or rss feed not found.
+        # Log error and force read from storage
+#       traceback.print_exc()    # log error for review. 
+        rss_feed = {"entries":[]} # build dummy entry to force read from storage 
 
-    while True:
-        if start_site not in rssfeedlist or start_site == rssfeedlist[-1]:
-            new_site = rssfeedlist[0]
-        else:
-            new_site = rssfeedlist[rssfeedlist.index(start_site) + 1]
-
-        if delete_entry:
-            rssfeedlist.remove(invalid_site)
-            delete_entry = False
-
-        try:
-            python_wiki_rss_url = rss_list[new_site]
-        except KeyError:
-            print('"' + new_site + '" is not a valid News topic. Removed.')
-            start_site = new_site  # return in the loop & get the next entry
-            invalid_site = new_site
-            delete_entry = True     # delete entry after getting next site
-            continue
-
-        try:
-            rss_feed = feedparser.parse( python_wiki_rss_url )
-        except:
-            # Rare case of changing network connections causes failure here.
-            # Log error and force read from storage
-#           print("Weird error")
-#           traceback.print_exc()    # log error for review. 
-            rss_feed = {"entries":[]} # build dummy entry to force read from storage 
-
-        return new_site, rss_feed # we succeeded in getting a valid new site
-
+    return rss_feed # we succeeded in getting a valid new site
 
 #-----------------------------------------------------------------
-def save_rss(rss_site, news_time, news):
+def save_pickle(rss_site, news_time, news):
     '''
     Save: 
     rss_save = (rss_site, rss_news)
@@ -176,7 +160,7 @@ def save_rss(rss_site, news_time, news):
                                       # ignore existing rss_site value
         f.close()
     except IOError:
-#       print("save_rss error")
+#       print("save_pickle error")
         rss_news = {}     # create empty dictionary to rebuild rss_news 
 
 #   Update the latest value for rss_site
@@ -188,10 +172,9 @@ def save_rss(rss_site, news_time, news):
     f.close()
 
 
-def get_rss(rss_site):
+def get_pickle(rss_site):
     try:
         f = open(pickle_file, "rb")
-#       rss_news = pickle.load(f)
         rss_site, rss_news = pickle.load(f)  # (rss_site, rss_news)
         f.close()
 
@@ -203,7 +186,9 @@ def get_rss(rss_site):
         news = []   # return an empty list. The topic will appear, but nothing else.
         rss_site = ''
 
-#   print("get_rss:",rss_site, news_time)
+    print("get_pickle:",rss_site, news_time)
+    for site in rss_news:
+        print(rss_news[site][0], site)
     return rss_site, news_time, news
 
 #-----------------------------------------------------------------
@@ -218,8 +203,8 @@ def show_details(details):
 #-----------------------------------------------------------------
 def prep(news_line):
     # news_line = 'unicode string'
-    #clear non-visible chars from string
-#   news_line = ''.join([c for c in news_line if ord(c) < 128 and ord(c) > 31])
+
+    # convert accented letters to non-accented
     news_line = normalize("NFD", news_line).encode('ascii','ignore').decode("utf-8")
 
     linesegments = []
@@ -316,13 +301,14 @@ get_IP2()
 rssfeedlist = []    # global: built in init_rssfeed, (occasionally) updated in next_rssfeed
 init_rssfeed()
 rss_site = ""
-rss_site, _, _ = get_rss(rss_site)  # get rss_site - ignore other stuff
+rss_site, _, _ = get_pickle(rss_site)  # get rss_site - ignore other stuff
 
 # Principal loop
 
 try:
     while True:
-        rss_site, rss_feed = next_rssfeed(rss_site)
+#       rss_site, rss_feed = next_rssfeed(rss_site)
+        rss_feed = get_rssfeed(rss_site)
 
         index = 0
 #       print(rss_site+" entries:", len(rss_feed["entries"]))
@@ -331,12 +317,12 @@ try:
         # Otherwise, save a copy for the pickle file.
         if len(rss_feed["entries"]) == 0:
             news_is_live = False
-            _, news_time, rss_feed["entries"] = get_rss(rss_site) # don't
+            _, news_time, rss_feed["entries"] = get_pickle(rss_site) # don't
                                                     # overwrite rss_site
         else:
             news_is_live = True
             news_time = datetime.datetime.now()
-            save_rss(rss_site, news_time, rss_feed["entries"])
+            save_pickle(rss_site, news_time, rss_feed["entries"])
 
         disp_topic(rss_site, news_time, news_is_live)
 
@@ -372,6 +358,8 @@ try:
                     config_mypi()
                 else:                         # keys: 6,7,8,9,#
                     index += 1
+
+        rss_site = next_rssfeed(rss_site)
 
 except KeyboardInterrupt:
     print("\rKeyboardInterrupt")

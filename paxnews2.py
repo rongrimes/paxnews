@@ -186,9 +186,11 @@ def get_pickle(rss_site):
         news = []   # return an empty list. The topic will appear, but nothing else.
         rss_site = ''
 
-    print("get_pickle:",rss_site, news_time)
-    for site in rss_news:
-        print(rss_news[site][0], site)
+#   print("Start site:", rss_site)
+#   for site in rss_news:
+#       timestamp = rss_news[site][0]
+#       timestamp = timestamp.strftime("%Y-%b-%d %H:%M")
+#       print(timestamp, site)
     return rss_site, news_time, news
 
 #-----------------------------------------------------------------

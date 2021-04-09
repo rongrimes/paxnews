@@ -12,8 +12,8 @@ import read_kbd_direct
 
 LAN_IFACE = "wlan0"
 
-io_terminal = True   # use terminal
-io_pax      = True   # use keypad, pax display
+io_terminal = False   # use terminal
+io_pax      = True    # use keypad, pax display
 
 try:
     import readchar
@@ -26,7 +26,7 @@ except ImportError:
     sys.exit()
 
 class Wifi:
-#   Object variables:
+#   Object global variables:
 #       scroll[]
 #       networks{}
 
@@ -101,19 +101,19 @@ class Wifi:
             key = self.kbd.read_from()
 #           print(key.encode().hex(), flush=True)
             if key in ["\r", "\n"]:
-                print()
+#               print()
                 self.kbd.exit()  # cleanup keyboard routines.
                 return line
             if key in ["\x03", "\x1b"]:  # ^C, esc
-                print()
+#               print()
                 self.kbd.exit()  # cleanup keyboard routines.
                 return ""
             if key == "\x7f":
-                print("\r" + " " * len(line), end="", flush=True)
+#               print("\r" + " " * len(line), end="", flush=True)
                 line = line[0:-1]
             else:
                 line += key
-            print("\r" + line, end="", flush=True)
+#           print("\r" + line, end="", flush=True)
             linesegments[1] = line
             display_lines(linesegments, 0)
 
@@ -121,8 +121,10 @@ class Wifi:
     def add_network(self, nname="", locked=False):
         password = ""
         try:
-            print("Enter values, ^C to exit.")
-            name = input("New network name: ") if nname == "" else nname
+            if nname == "":
+                print("Enter values, ^C to exit.")
+                nname = input("New network name: ")
+
             if locked:
 #               password = input("Network password: ")
                 password = self.get_network_password()
@@ -132,7 +134,7 @@ class Wifi:
             print()
             return False
         id = int(self.wpa_cli("add_network"))
-        result = self.wpa_cli("set_network", id, parm='ssid "'+name+'"')
+        result = self.wpa_cli("set_network", id, parm='ssid "'+nname+'"')
         if len(password) == 0:
             result = self.wpa_cli("set_network", id, parm='key_mgmt NONE')
         else:
@@ -307,7 +309,6 @@ class Wifi:
 # Help
             if   key in ("0", "h"):
                 myprint, linesegments = self.wifi_help()
-
                 self.display(myprint=myprint, \
                         linesegments=linesegments, \
                         delay=3)

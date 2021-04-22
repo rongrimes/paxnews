@@ -98,7 +98,6 @@ def init_rssfeed():
     rssfeedlist.append('Canada')
     rssfeedlist.append('Toronto')
     rssfeedlist.append('Montreal')
-    rssfeedlist.append('Politics')
     rssfeedlist.append('Edmonton')
     rssfeedlist.append('British Columbia')
     rssfeedlist.append('Kamloops')
@@ -117,6 +116,7 @@ def init_rssfeed():
     rssfeedlist.append('Newfoundland & Labrador')
     rssfeedlist.append('North')
     rssfeedlist.append('Aboriginal')
+    rssfeedlist.append('Politics')
     rssfeedlist.append('Business')
     rssfeedlist.append('Health')
     rssfeedlist.append('Arts & Entertainment')
@@ -365,8 +365,12 @@ try:
 
 except KeyboardInterrupt:
     print("\rKeyboardInterrupt")
-    GPIO.cleanup()   # Clear any current status
+except:
+    print("\rError exception")
+    linesegments = ["Error exit!!"]
+    display_lines(linesegments, 3)
 
+GPIO.cleanup()   # Clear any current status
 # Clear Screen
 clear_screen(0)
 

@@ -11,6 +11,22 @@ import wifilib
 admin_level = False          # Enable (via "7") to shutdown paxnews
 wifi = wifilib.Wifi()
 
+def enable_btooth_kbd():
+    # Need full path name: wpa_cli is not in PATH when executed
+    # from a @reboot in crontab
+    clear_screen(0)
+
+    btc = './blt-kbd_tzumi.sh'
+    pid = subprocess.Popen(btc, stdin=subprocess.PIPE, \
+                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    result = pid.communicate()[0].decode("utf-8")
+    linesegments = []
+    linesegments.append("Keyboard:")
+    linesegments.append(result)
+    display_lines(linesegments, 3)
+#   clear_screen(0.5)
+#   print(result)
+
 def config_help():
     '''show config commands'''
     linesegments = []
@@ -18,6 +34,7 @@ def config_help():
     linesegments.append("2=Wifi status")
     linesegments.append("3=Wifi config")
     linesegments.append("4=Sw. backlight")
+    linesegments.append("6=Enable BT kbd")
     linesegments.append("7=Set admin lvl")
     linesegments.append("8=Reboot")
     linesegments.append("9=Shutdown")
@@ -54,6 +71,8 @@ def config_mypi():
             wifi.wifi_config()
         elif keyvalue == "4":             # Switch backlight
             pax_2x16_backlight= switch_backlight(pax_2x16_backlight) # True = On
+        elif keyvalue == "6":
+            enable_btooth_kbd()   # enable Bluetooth keyboard
         elif keyvalue == "7":
             toggle_admin()
         elif keyvalue == "8":             # Reboot

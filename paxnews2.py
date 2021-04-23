@@ -365,10 +365,10 @@ try:
 
 except KeyboardInterrupt:
     print("\rKeyboardInterrupt")
-except:
-    print("\rError exception")
-    linesegments = ["Error exit!!"]
-    display_lines(linesegments, 3)
+#except:
+#   print("\rError exception")
+#   linesegments = ["Error exit!!"]
+#   display_lines(linesegments, 3)
 
 GPIO.cleanup()   # Clear any current status
 # Clear Screen

@@ -148,6 +148,13 @@ def turnon_backlight():
     pax_2x16.write(pax["LcdBLon"])     # Backlight off
     pax_2x16_backlight = True
 
+def restore_backlight():
+    global pax_2x16_backlight
+    if pax_2x16_backlight:
+        turnon_backlight()
+    else:
+        turnoff_backlight()
+
 #-----------------------------------------------------------------
 # UTILITIES
 def cap(s, leng):

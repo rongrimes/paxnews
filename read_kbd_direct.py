@@ -60,6 +60,8 @@ class KDirect():
 #           except AttributeError:   # we have lost the keyboard
                 del self.keyboard   # device has gone, destroy it so flash can't use it.
                 self.keyboard = self._find_keyboard()  # ... and rebuild it
+                if self.keyboard is None:
+                    return '\r'     # no recovery!
                 self._grab_keyboard()
 
     def _handle(self, event):
@@ -147,21 +149,15 @@ class KDirect():
 
 #-----------------------------------------------------------------------------
     def _set_led(self, shine):
-    #   set led
-        while True:
-            try:
-                dev =self.keyboard    # the device - it should work fine
-                break
-#           except OSError:         # but if the device disappears (not defined)
-            except AttributeError:  # but if the device disappears (not defined)
-                time.sleep(2)         # ... then try again soon.
-        dev.set_led(evdev.ecodes.LED_CAPSL, shine)
-        return
+    #   set led to shine  (True/False)
+        if self.keyboard is not None:   # is None if we lose the keyboard spontaneously.
+            self.keyboard.set_led(evdev.ecodes.LED_CAPSL, shine)
 
 #-----------------------------------------------------------------------------
+#Globals
     flashing = True   
     flash_pause = False
-    def _flash_ctl(self):
+    def _flash_ctl(self):     # runs in separate thread (see init)
         shine = True
         while self.flashing:
             time.sleep(1)
@@ -173,9 +169,10 @@ class KDirect():
 
 #-----------------------------------------------------------------------------
     def exit(self):
-        self.keyboard.ungrab()
+        if self.keyboard is not None:
+            self.keyboard.ungrab()
         self.flash_pause = False
-        self.flashing = False
+        self.flashing = False  # causes _flash_ctl to terminate.
         self.flash.join()
 
 #-----------------------------------------------------------------------------

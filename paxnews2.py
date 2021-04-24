@@ -252,7 +252,8 @@ def help_msg():
 
 #-----------------------------------------------------------------
 def disp_topic(rss_site, news_time, news_is_live):
-    init_screen(0.5)                     # repeated here to restore backlight each cycle.
+#   init_screen(0.5)                     # repeated here to restore backlight each cycle.
+    restore_backlight()                  # restore backlight each cycle in case it changes..
 
     '''Display the topic & time. Called at start of topic or if requested.'''
     linesegments = []
@@ -365,10 +366,11 @@ try:
 
 except KeyboardInterrupt:
     print("\rKeyboardInterrupt")
-#except:
-#   print("\rError exception")
-#   linesegments = ["Error exit!!"]
-#   display_lines(linesegments, 3)
+except:
+    print("\rError exception")
+    linesegments = ["Error exit!!"]
+    display_lines(linesegments, 3)
+    traceback.print_exc()    # log error for review. 
 
 GPIO.cleanup()   # Clear any current status
 # Clear Screen

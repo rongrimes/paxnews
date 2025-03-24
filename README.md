@@ -77,5 +77,24 @@ The CBNR is built from:
 ## Operating Instructions
 [See the project wiki](../../wiki/Home)
 ***
-Last update: February 12, 2017  
+## Configuration Note
+The CBNR uses the serial port to drive the Parallax 2x16 display. By default, when PiOS/DietPi starts up, it outputs
+a bunch of stuff to the serial port with incompatible tty parameters.
+
+As a result, the 2x16 display shows
+gibberish and worse, its onboard buzzer outputs a bunch of random tones. This garbage serial output is suppressed with a boot file
+configuration. However, OS upgrades overwrite this file and it needs to be fixed from time to time.
+
+File: `/boot/firmware/cmdline.txt`  
+Add to the end of the first line: `console=tty`
+
+... the line typically looks like:
+```
+root=PARTUUID=dc9fd960-02 rootfstype=ext4 rootwait net.ifnames=0 logo.nologo console=tty
+```
+
+***
+Last update: March 24, 2025  
+(Prev update: February 12, 2017)
+
 Toronto Canada
